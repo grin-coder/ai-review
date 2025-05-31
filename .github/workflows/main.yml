@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'  # 你可以选择其他发行版，如 'adopt' 或 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       - name: Run Java code
         run: |
