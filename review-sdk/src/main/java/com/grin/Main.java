@@ -76,6 +76,7 @@ public class Main {
             throw new NullPointerException("error: githubToken is null");
         }
         System.out.println("githubToken:" + githubToken);
+        githubToken="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";
         writeLog(githubToken, reviewRes);
     }
 
