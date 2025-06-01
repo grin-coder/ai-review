@@ -29,21 +29,8 @@ public class Main {
     private static final String API_SECRET_KEY = "f650eb8bc4954b56a21f908b08301158.9dUNbF2pgJ9lHKuF";
 
     private static final String REVIEW_PROMPT = "请对以下git提交的代码进行代码审查，并指出以下方面的问题或改进建议：\n" +
-            "1. 代码是否符合编码规范（命名、格式、缩进等）？\n" +
-            "2. 是否存在潜在的 bug 或边界条件未处理？\n" +
-            "3. 是否有重复代码？是否可以提取为公共方法？\n" +
-            "4. 是否有性能问题或资源泄漏风险？\n" +
-            "5. 异常处理是否完善？是否有 try-catch 滥用或缺失？\n" +
-            "6. 是否有安全漏洞（如 SQL 注入、XSS 等）？\n" +
-            "7. 是否有足够的注释和文档说明？\n" +
-            "8. 类/方法职责是否单一？是否符合 SOLID 原则？\n" +
-            "9. 接口设计是否合理？是否具备扩展性？\n" +
-            "10. 日志打印是否完整、清晰且不过量？\n" +
-            "\n" +
-            "除了上面这几条，你也可以自由发挥，请以中文输出结果，并按严重程度分类：建议、警告、错误。" +
+            "请以中文输出结果，并按严重程度分类：建议、警告、错误。" +
             "\n" + "############### 变更代码如下：" + "\n";
-
-    private String github_token = "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";
 
     public static void main(String[] args) throws Exception {
         // 1.获取需要评审的代码
@@ -76,8 +63,8 @@ public class Main {
             throw new NullPointerException("error: githubToken is null");
         }
         System.out.println("githubToken:" + githubToken);
-        githubToken = "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";
-        writeLog(githubToken, reviewRes);
+        String logUrl = writeLog(githubToken, reviewRes);
+        System.out.println("logUrl:" + logUrl);
     }
 
     private static String writeLog(String githubToken, String reviewRes) throws Exception {
@@ -102,7 +89,6 @@ public class Main {
         String fileName = timeformat.format(date) + ".md";
         String filePath = storagePath + "/" + dateStr + "/" + fileName;
         File file = new File(filePath);
-//        file.createNewFile();
         // 将评审结果写入文件
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(reviewRes);
