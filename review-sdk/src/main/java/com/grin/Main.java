@@ -76,7 +76,7 @@ public class Main {
             throw new NullPointerException("error: githubToken is null");
         }
         System.out.println("githubToken:" + githubToken);
-        githubToken="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";
+        githubToken = "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";
         writeLog(githubToken, reviewRes);
     }
 
@@ -99,7 +99,8 @@ public class Main {
         }
         // 创建文件
         SimpleDateFormat timeformat = new SimpleDateFormat("hh时mm分ss秒SSS毫秒");
-        String filePath = storagePath + "/" + dateStr + "/" + timeformat.format(date) + ".md";
+        String fileName = timeformat.format(date) + ".md";
+        String filePath = storagePath + "/" + dateStr + "/" + fileName;
         File file = new File(filePath);
 //        file.createNewFile();
         // 将评审结果写入文件
@@ -107,7 +108,7 @@ public class Main {
             fileWriter.write(reviewRes);
         }
         // 进行提交
-        git.add().addFilepattern(filePath).call();
+        git.add().addFilepattern(dateStr + "/" + fileName).call();
         git.commit().setMessage("代码评审结果写入v1.0").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
