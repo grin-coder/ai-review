@@ -71,6 +71,12 @@
             <artifactId>org.eclipse.jgit</artifactId>
             <version>5.13.0.202109080827-r</version>
         </dependency>
+        <dependency>
+            <groupId>cn.bigmodel.openapi</groupId>
+            <artifactId>oapi-java-sdk</artifactId>
+            <version>release-V4-2.4.1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <resources>
