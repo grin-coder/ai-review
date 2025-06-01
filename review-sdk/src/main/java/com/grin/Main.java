@@ -44,6 +44,8 @@ public class Main {
 
     private String github_token = "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";
     public static void main(String[] args) throws Exception {
+        String githubToken = System.getenv("GITHUB_TOKEN");
+        System.out.println(githubToken);
         // 获取需要评审的代码
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "Head^", "Head");
         Process process = processBuilder.start();
@@ -61,8 +63,8 @@ public class Main {
         String reviewRes = codeReview(diffCode.toString());
         System.out.println("review result:\n" + reviewRes);
         // 写入github的日志仓库里，用来追溯
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        System.out.println("GITHUB_TOKEN");
+//        String githubToken = System.getenv("GITHUB_TOKEN");
+//        System.out.println("GITHUB_TOKEN");
 //        writeLog(githubToken, reviewRes);
     }
 
