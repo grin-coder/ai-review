@@ -46,12 +46,7 @@ public class Main {
     private String github_token = "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";
 
     public static void main(String[] args) throws Exception {
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (StringUtils.isEmpty(githubToken)) {
-            throw new NullPointerException("error: githubToken is null");
-        }
-        System.out.println("githubToken:"+githubToken);
-        // 获取需要评审的代码
+        // 1.获取需要评审的代码
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD^", "HEAD");
         // 设置命令执行目录
         processBuilder.directory(new File("."));
@@ -72,20 +67,23 @@ public class Main {
         System.out.println("diffCode：\n" + diffCode);
         int exitCode = process.waitFor();
         System.out.println("exitCode:" + exitCode);
-        // 进行codeReview
+        // 2. 进行codeReview
         String reviewRes = codeReview(diffCode.toString());
         System.out.println("review result:\n" + reviewRes);
         // 写入github的日志仓库里，用来追溯
-//        String githubToken = System.getenv("GITHUB_TOKEN");
-//        System.out.println("GITHUB_TOKEN");
-//        writeLog(githubToken, reviewRes);
+        String githubToken = System.getenv("GITHUB_TOKEN");
+        if (StringUtils.isEmpty(githubToken)) {
+            throw new NullPointerException("error: githubToken is null");
+        }
+        System.out.println("githubToken:" + githubToken);
+        writeLog(githubToken, reviewRes);
     }
 
     private static String writeLog(String githubToken, String reviewRes) throws Exception {
         // 对记录log仓库进行clone，然后把评审结果写入后，进行提交并推送给远程仓库
-        String logUrl = "";
+        String repositoryUrl = "https://github.com/grin-coder/ai-review-log.git";
         String storagePath = "review";
-        Git git = Git.cloneRepository().setURI(logUrl)
+        Git git = Git.cloneRepository().setURI(repositoryUrl)
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, ""))
                 .setDirectory(new File(storagePath))
                 .call();
@@ -113,8 +111,8 @@ public class Main {
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
         System.out.println("review success!");
-        // 返回写入后的文件url地址
-        return logUrl + "/" + filePath;
+        // 返回写入后的文件url地址,默认使用main分支
+        return repositoryUrl + "/blob/main/" + filePath;
     }
 
     public static String codeReview(String content) {
