@@ -106,7 +106,7 @@ public class Main {
         String prompt = REVIEW_PROMPT + content;
 
         // 创建鉴权client
-        ClientV4 client = new ClientV4.Builder(API_SECRET_KEY).networkConfig(60, 60, 60, 60, TimeUnit.SECONDS).build();
+        ClientV4 client = new ClientV4.Builder(API_SECRET_KEY).networkConfig(120, 120, 120, 120, TimeUnit.SECONDS).build();
         List<ChatMessage> messages = new ArrayList<>();
         // 构建请求
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(), prompt);
