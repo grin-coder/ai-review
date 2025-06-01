@@ -101,14 +101,14 @@ public class Main {
         SimpleDateFormat timeformat = new SimpleDateFormat("hh时mm分ss秒SSS毫秒");
         String filePath = storagePath + "/" + dateStr + "/" + timeformat.format(date) + ".md";
         File file = new File(filePath);
-        file.createNewFile();
+//        file.createNewFile();
         // 将评审结果写入文件
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(reviewRes);
         }
         // 进行提交
         git.add().addFilepattern(filePath).call();
-        git.commit().setMessage("代码评审结果写入").call();
+        git.commit().setMessage("代码评审结果写入v1.0").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
         System.out.println("review success!");
