@@ -53,6 +53,8 @@ public class Main {
         System.out.println(githubToken);
         // 获取需要评审的代码
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "Head^", "Head");
+        // 设置命令执行目录，防止权限不足
+        processBuilder.directory(new File("."));
         Process process = processBuilder.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
