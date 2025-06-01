@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zhipu.oapi.ClientV4;
 import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.*;
+import com.zhipu.oapi.utils.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.ChainingCredentialsProvider;
@@ -43,8 +44,12 @@ public class Main {
             "\n" + "############### 变更代码如下：" + "\n";
 
     private String github_token = "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";
+
     public static void main(String[] args) throws Exception {
         String githubToken = System.getenv("GITHUB_TOKEN");
+        if (StringUtils.isEmpty(githubToken)) {
+            throw new NullPointerException("error: githubToken is null");
+        }
         System.out.println(githubToken);
         // 获取需要评审的代码
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "Head^", "Head");
