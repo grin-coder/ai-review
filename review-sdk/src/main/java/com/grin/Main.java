@@ -58,7 +58,7 @@ public class Main {
         String reviewRes = codeReview(diffCode.toString());
         System.out.println("review result:\n" + reviewRes);
         // 写入github的日志仓库里，用来追溯
-        String githubToken = System.getenv("GITHUB_TOKEN");
+        String githubToken = System.getenv("ACCESS_TOKEN");
         if (StringUtils.isEmpty(githubToken)) {
             throw new NullPointerException("error: githubToken is null");
         }
