@@ -50,7 +50,7 @@ public class Main {
         if (StringUtils.isEmpty(githubToken)) {
             throw new NullPointerException("error: githubToken is null");
         }
-        System.out.println(githubToken);
+        System.out.println("githubToken:"+githubToken);
         // 获取需要评审的代码
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "Head^", "Head");
         // 设置命令执行目录，防止权限不足
@@ -63,6 +63,12 @@ public class Main {
         while ((line = reader.readLine()) != null) {
             diffCode.append(line);
         }
+        // 读取错误输出（关键！）
+        BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        while ((line = stderr.readLine()) != null) {
+            System.err.println("Git Error: " + line); // 打印错误信息
+        }
+
         System.out.println("diffCode：\n" + diffCode);
         int exitCode = process.waitFor();
         System.out.println("exitCode:" + exitCode);
