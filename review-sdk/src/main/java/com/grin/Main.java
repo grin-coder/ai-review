@@ -95,7 +95,7 @@ public class Main {
         }
         // 进行提交
         git.add().addFilepattern(dateStr + "/" + fileName).call();
-        git.commit().setMessage("代码评审结果写入v1.0").call();
+        git.commit().setMessage("代码评审结果写入v2.0").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
         System.out.println("review success!");
