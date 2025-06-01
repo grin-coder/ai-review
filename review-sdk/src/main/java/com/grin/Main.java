@@ -139,7 +139,6 @@ public class Main {
         Object chatResp = resp.map(ModelApiResponse::getData).map(ModelData::getChoices)
                 .filter(choices -> !choices.isEmpty()).map(choices -> choices.get(0)).map(Choice::getMessage)
                 .map(ChatMessage::getContent).orElse(null);
-        System.out.println("model output:" + chatResp);
         assert chatResp != null;
         return chatResp.toString();
     }
