@@ -93,13 +93,13 @@ public class Main {
         Date date = new Date();
         String dateStr = simpleDateFormat.format(date);
         // 创建文件夹
-        File folder = new File(storagePath + "/" + date);
+        File folder = new File(storagePath + "/" + dateStr);
         if (!folder.exists()) {
             folder.mkdirs();
         }
         // 创建文件
         SimpleDateFormat timeformat = new SimpleDateFormat("hh:mm:ss");
-        String filePath = storagePath + "/" + date + "/" + timeformat.format(date) + ".md";
+        String filePath = storagePath + "/" + dateStr + "/" + timeformat.format(date) + ".md";
         File file = new File(filePath);
         file.createNewFile();
         // 将评审结果写入文件
