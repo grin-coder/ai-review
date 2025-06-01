@@ -98,7 +98,7 @@ public class Main {
             folder.mkdirs();
         }
         // 创建文件
-        SimpleDateFormat timeformat = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat timeformat = new SimpleDateFormat("hh时mm分ss秒SSS毫秒");
         String filePath = storagePath + "/" + dateStr + "/" + timeformat.format(date) + ".md";
         File file = new File(filePath);
         file.createNewFile();
