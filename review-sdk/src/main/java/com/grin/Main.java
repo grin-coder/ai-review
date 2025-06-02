@@ -47,7 +47,7 @@ public class Main {
             "\n" + "############### 变更代码如下：" + "\n";
 
     public static void main(String[] args) throws Exception {
-        System.out.println(getEnv("GITHUB_TOKEN"));
+        System.out.println(System.getenv("GITHUB_TOKEN"));
         GitCommand gitCommand = new GitCommand(
                 getEnv("GITHUB_REVIEW_LOG_URI"),
                 getEnv("GITHUB_TOKEN"),
