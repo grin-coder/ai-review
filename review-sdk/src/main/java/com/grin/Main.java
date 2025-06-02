@@ -35,7 +35,7 @@ public class Main {
     private static final String API_SECRET_KEY = "f650eb8bc4954b56a21f908b08301158.9dUNbF2pgJ9lHKuF";
 
     private static final String REVIEW_PROMPT = "请对以下git提交的代码进行代码审查，并指出以下方面的问题或改进建议：\n" +
-            "请以中文输出结果，并按严重程度分类：建议、警告、错误。" +
+            "请以中文输出结果" +
             "\n" + "############### 变更代码如下：" + "\n";
 
     public static void main(String[] args) throws Exception {
@@ -148,7 +148,7 @@ public class Main {
 
         System.out.println("review success!");
         // 返回写入后的文件url地址,默认使用main分支
-        return logFileUrl + filePath + dateStr + "/" + fileName;
+        return logFileUrl  + dateStr + "/" + fileName;
     }
 
     public static String codeReview(String content) {
