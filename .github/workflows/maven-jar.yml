@@ -30,9 +30,6 @@ jobs:
       - name: Copy openai-code-review-sdk JAR
         run: mvn dependency:copy -Dartifact=com.grin:review-sdk:1.0 -DoutputDirectory=./libs
 
-      - name: Run Code Review
-        run: java -jar ./libs/review-sdk-1.0.jar
-
       - name: 仓库名称
         id: repo-name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
@@ -56,6 +53,9 @@ jobs:
           echo "Commit author is ${{ env.COMMIT_AUTHOR }}"
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"     
 
+
+      - name: Run Code Review
+        run: java -jar ./libs/review-sdk-1.0.jar
         env:
           GITHUB_TOKEN: ${{  secrets.ACCESS_TOKEN }}
           GITHUB_REVIEW_LOG_URI: ${{ secrets.CODE_REVIEW_LOG_URI }}
