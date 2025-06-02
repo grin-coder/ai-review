@@ -117,7 +117,7 @@ public class Main {
         // 对记录log仓库进行clone，然后把评审结果写入后，进行提交并推送给远程仓库
         String repositoryUrl = "https://github.com/grin-coder/ai-review-log.git";
         // 文件的前缀url
-        String logFileUrl = "https://github.com/grin-coder/ai-review-log/blob/main";
+        String logFileUrl = "https://github.com/grin-coder/ai-review-log/blob/main/";
         String storagePath = "review";
         Git git = Git.cloneRepository().setURI(repositoryUrl)
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, ""))
