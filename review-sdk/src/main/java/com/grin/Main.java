@@ -47,6 +47,7 @@ public class Main {
             "\n" + "############### 变更代码如下：" + "\n";
 
     public static void main(String[] args) throws Exception {
+        System.out.println(getEnv("GITHUB_TOKEN"));
         GitCommand gitCommand = new GitCommand(
                 getEnv("GITHUB_REVIEW_LOG_URI"),
                 getEnv("GITHUB_TOKEN"),
@@ -70,6 +71,7 @@ public class Main {
 
     private static String getEnv(String key) {
         String value = System.getenv(key);
+        System.out.println("环境变量" + key + "；" + value);
         if (null == value || value.isEmpty()) {
             throw new RuntimeException("value is null");
         }
