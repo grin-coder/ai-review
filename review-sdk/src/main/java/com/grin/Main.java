@@ -19,6 +19,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -124,17 +127,21 @@ public class Main {
                 .setDirectory(new File(storagePath))
                 .call();
         // 创建评审文件,日期 / 随机数
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String dateStr = simpleDateFormat.format(date);
+        // 指定时区为北京时间（UTC+8）
+        ZoneId zoneId = ZoneId.of("Asia/Shanghai");  // 也可以换成其他时区，比如 ZoneId.of("Europe/London")
+        // 使用带有时区的 ZonedDateTime 替代 Date
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+        // 格式化日期为 yyyy-MM-dd（用于文件夹名称）
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId);
+        String dateStr = dateFormatter.format(now);
         // 创建文件夹
         File folder = new File(storagePath + "/" + dateStr);
         if (!folder.exists()) {
             folder.mkdirs();
         }
         // 创建文件
-        SimpleDateFormat timeformat = new SimpleDateFormat("hh时mm分ss秒SSS毫秒");
-        String fileName = timeformat.format(date) + ".md";
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH时mm分ss秒SSS毫秒").withZone(zoneId);
+        String fileName = timeFormatter.format(now) + ".md";
         String filePath = storagePath + "/" + dateStr + "/" + fileName;
         File file = new File(filePath);
         // 将评审结果写入文件
