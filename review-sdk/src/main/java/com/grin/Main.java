@@ -1,6 +1,9 @@
 package com.grin;
 
+import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.grin.domain.model.Message;
+import com.grin.types.utils.WXAccessTokenUtils;
 import com.zhipu.oapi.ClientV4;
 import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.*;
@@ -11,6 +14,9 @@ import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -57,7 +63,7 @@ public class Main {
         // 2. 进行codeReview
         String reviewRes = codeReview(diffCode.toString());
         System.out.println("review result:\n" + reviewRes);
-        // 写入github的日志仓库里，用来追溯
+        // 3. 写入github的日志仓库里，用来追溯
         String githubToken = System.getenv("GITHUB_TOKEN");
         if (StringUtils.isEmpty(githubToken)) {
             throw new NullPointerException("error: githubToken is null");
@@ -65,6 +71,46 @@ public class Main {
         System.out.println("githubToken:" + githubToken);
         String logUrl = writeLog(githubToken, reviewRes);
         System.out.println("logUrl:" + logUrl);
+        // 4. 通过微信公众号发送消息
+        Message message = new Message();
+        message.setUrl(logUrl);
+        message.put("creator", "grin");
+        message.put("logUrl", logUrl);
+        message.setTemplate_id("eU0ZsNPNp3P6LQgzzSoURunPda9_Ytkd_ZDehImk5S8");
+        message.setTopcolor("#98FF98");
+        sendWeixinMessage(message);
+    }
+
+    private static void sendWeixinMessage(Message message) {
+        // 获取访问令牌
+        String accessToken = WXAccessTokenUtils.getAccessToken();
+        System.out.println("AccessToken:" + accessToken);
+        // 进行发送
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+        sendPostRequest(url, JSON.toJSONString(message));
+    }
+
+    private static void sendPostRequest(String urlString, String jsonBody) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static String writeLog(String githubToken, String reviewRes) throws Exception {
