@@ -153,18 +153,18 @@ public class ProjectTest {
 
     @Test
     public void testWeixinMessage() {
-        // 4. 通过微信公众号发送消息
-        Message message = new Message();
-        message.put("creator", "grin");
-        message.put("logUrl", "https://github.com/grin-coder/ai-review-log/blob/main/2025-06-01/04%E6%97%B636%E5%88%8608%E7%A7%92441%E6%AF%AB%E7%A7%92.md");
-        message.setTemplate_id("zU9VjZdl0N6SAnLhf3ER4NbDwCSAQsbXgjNUSB9SvtU");
-        message.setTopcolor("#98FF98");
-        // 获取访问令牌
-        String accessToken = WXAccessTokenUtils.getAccessToken();
-        System.out.println("AccessToken:" + accessToken);
-        // 进行发送
-        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
-        sendPostRequest(url, JSON.toJSONString(message));
+//        // 4. 通过微信公众号发送消息
+//        Message message = new Message();
+//        message.put("creator", "grin");
+//        message.put("logUrl", "https://github.com/grin-coder/ai-review-log/blob/main/2025-06-01/04%E6%97%B636%E5%88%8608%E7%A7%92441%E6%AF%AB%E7%A7%92.md");
+//        message.setTemplate_id("zU9VjZdl0N6SAnLhf3ER4NbDwCSAQsbXgjNUSB9SvtU");
+//        message.setTopcolor("#98FF98");
+//        // 获取访问令牌
+//        String accessToken = WXAccessTokenUtils.getAccessToken();
+//        System.out.println("AccessToken:" + accessToken);
+//        // 进行发送
+//        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+//        sendPostRequest(url, JSON.toJSONString(message));
     }
 
     private static void sendPostRequest(String urlString, String jsonBody) {

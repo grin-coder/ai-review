@@ -3,6 +3,11 @@ package com.grin;
 import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.grin.domain.model.Message;
+import com.grin.domain.model.service.impl.OpenAiCodeReview;
+import com.grin.infrastructure.ai.IOpenAi;
+import com.grin.infrastructure.ai.impl.ChatGLM;
+import com.grin.infrastructure.git.GitCommand;
+import com.grin.infrastructure.weixin.WeiXin;
 import com.grin.types.utils.WXAccessTokenUtils;
 import com.zhipu.oapi.ClientV4;
 import com.zhipu.oapi.Constants;
@@ -42,56 +47,86 @@ public class Main {
             "\n" + "############### 变更代码如下：" + "\n";
 
     public static void main(String[] args) throws Exception {
-        // 1.获取需要评审的代码
-        ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD^", "HEAD");
-        // 设置命令执行目录
-        processBuilder.directory(new File("."));
-        Process process = processBuilder.start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        // 获取代码变更
-        StringBuilder diffCode = new StringBuilder();
-        while ((line = reader.readLine()) != null) {
-            diffCode.append(line);
-        }
-        // 读取错误输出（关键！）
-        BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        while ((line = stderr.readLine()) != null) {
-            System.err.println("Git Error: " + line);
-        }
+        GitCommand gitCommand = new GitCommand(
+                getEnv("GITHUB_REVIEW_LOG_URI"),
+                getEnv("GITHUB_TOKEN"),
+                getEnv("COMMIT_PROJECT"),
+                getEnv("COMMIT_BRANCH"),
+                getEnv("COMMIT_AUTHOR"),
+                getEnv("COMMIT_MESSAGE")
+        );
 
-        System.out.println("diffCode：\n" + diffCode);
-        int exitCode = process.waitFor();
-        System.out.println("exitCode:" + exitCode);
-        // 2. 进行codeReview
-        String reviewRes = codeReview(diffCode.toString());
-        System.out.println("review result:\n" + reviewRes);
-        // 3. 写入github的日志仓库里，用来追溯
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (StringUtils.isEmpty(githubToken)) {
-            throw new NullPointerException("error: githubToken is null");
-        }
-        System.out.println("githubToken:" + githubToken);
-        String logUrl = writeLog(githubToken, reviewRes);
-        System.out.println("logUrl:" + logUrl);
-        // 4. 通过微信公众号发送消息
-        Message message = new Message();
-        message.setUrl(logUrl);
-        message.put("creator", "grin");
-        message.put("logUrl", logUrl);
-        message.setTemplate_id("eU0ZsNPNp3P6LQgzzSoURunPda9_Ytkd_ZDehImk5S8");
-        message.setTopcolor("#98FF98");
-        sendWeixinMessage(message);
+        WeiXin weiXin = new WeiXin(
+                getEnv("WEIXIN_APPID"),
+                getEnv("WEIXIN_SECRET"),
+                getEnv("WEIXIN_TOUSER"),
+                getEnv("WEIXIN_TEMPLATE_ID")
+        );
+
+        IOpenAi iOpenAi = new ChatGLM(getEnv("CHATGLM_APIKEYSECRET"));
+        OpenAiCodeReview openAiCodeReview = new OpenAiCodeReview(gitCommand, weiXin, iOpenAi);
+        openAiCodeReview.exec();
     }
 
-    private static void sendWeixinMessage(Message message) {
-        // 获取访问令牌
-        String accessToken = WXAccessTokenUtils.getAccessToken();
-        System.out.println("AccessToken:" + accessToken);
-        // 进行发送
-        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
-        sendPostRequest(url, JSON.toJSONString(message));
+    private static String getEnv(String key) {
+        String value = System.getenv(key);
+        if (null == value || value.isEmpty()) {
+            throw new RuntimeException("value is null");
+        }
+        return value;
     }
+
+//    public static void main(String[] args) throws Exception {
+//        // 1.获取需要评审的代码
+//        ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD^", "HEAD");
+//        // 设置命令执行目录
+//        processBuilder.directory(new File("."));
+//        Process process = processBuilder.start();
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//        String line;
+//        // 获取代码变更
+//        StringBuilder diffCode = new StringBuilder();
+//        while ((line = reader.readLine()) != null) {
+//            diffCode.append(line);
+//        }
+//        // 读取错误输出（关键！）
+//        BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//        while ((line = stderr.readLine()) != null) {
+//            System.err.println("Git Error: " + line);
+//        }
+//
+//        System.out.println("diffCode：\n" + diffCode);
+//        int exitCode = process.waitFor();
+//        System.out.println("exitCode:" + exitCode);
+//        // 2. 进行codeReview
+//        String reviewRes = codeReview(diffCode.toString());
+//        System.out.println("review result:\n" + reviewRes);
+//        // 3. 写入github的日志仓库里，用来追溯
+//        String githubToken = System.getenv("GITHUB_TOKEN");
+//        if (StringUtils.isEmpty(githubToken)) {
+//            throw new NullPointerException("error: githubToken is null");
+//        }
+//        System.out.println("githubToken:" + githubToken);
+//        String logUrl = writeLog(githubToken, reviewRes);
+//        System.out.println("logUrl:" + logUrl);
+//        // 4. 通过微信公众号发送消息
+//        Message message = new Message();
+//        message.setUrl(logUrl);
+//        message.put("creator", "grin");
+//        message.put("logUrl", logUrl);
+//        message.setTemplate_id("eU0ZsNPNp3P6LQgzzSoURunPda9_Ytkd_ZDehImk5S8");
+//        message.setTopcolor("#98FF98");
+//        sendWeixinMessage(message);
+//    }
+
+//    private static void sendWeixinMessage(Message message) {
+//        // 获取访问令牌
+//        String accessToken = WXAccessTokenUtils.getAccessToken();
+//        System.out.println("AccessToken:" + accessToken);
+//        // 进行发送
+//        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+//        sendPostRequest(url, JSON.toJSONString(message));
+//    }
 
     private static void sendPostRequest(String urlString, String jsonBody) {
         try {
@@ -155,7 +190,7 @@ public class Main {
 
         System.out.println("review success!");
         // 返回写入后的文件url地址,默认使用main分支
-        return logFileUrl  + dateStr + "/" + fileName;
+        return logFileUrl + dateStr + "/" + fileName;
     }
 
     public static String codeReview(String content) {

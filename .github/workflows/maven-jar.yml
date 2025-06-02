@@ -32,5 +32,42 @@ jobs:
 
       - name: Run Code Review
         run: java -jar ./libs/review-sdk-1.0.jar
+
+      - name: 仓库名称
+        id: repo-name
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      - name: 分支名称
+        id: branch-name
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: 作者
+        id: commit-author
+        run: echo "COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>')" >> $GITHUB_ENV
+
+      - name: 提交信息
+        id: commit-message
+        run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
+
+      - name: Print repository, branch name, commit author, and commit message
+        run: |
+          echo "Repository name is ${{ env.REPO_NAME }}"
+          echo "Branch name is ${{ env.BRANCH_NAME }}"
+          echo "Commit author is ${{ env.COMMIT_AUTHOR }}"
+          echo "Commit message is ${{ env.COMMIT_MESSAGE }}"     
+
         env:
           GITHUB_TOKEN: ${{  secrets.ACCESS_TOKEN }}
+          GITHUB_REVIEW_LOG_URI: ${{ secrets.CODE_REVIEW_LOG_URI }}
+          # 提交的信息
+          COMMIT_PROJECT: ${{ env.REPO_NAME }}
+          COMMIT_BRANCH: ${{ env.BRANCH_NAME }}
+          COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
+          COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          # 微信配置 「https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index」
+          WEIXIN_APPID: ${{ secrets.WEIXIN_APPID }}
+          WEIXIN_SECRET: ${{ secrets.WEIXIN_SECRET }}
+          WEIXIN_TOUSER: ${{ secrets.WEIXIN_TOUSER }}
+          WEIXIN_TEMPLATE_ID: ${{ secrets.WEIXIN_TEMPLATE_ID }}
+          # OpenAi - ChatGLM 配置「https://open.bigmodel.cn/api/paas/v4/chat/completions」、「https://open.bigmodel.cn/usercenter/apikeys」
+          CHATGLM_APIKEYSECRET: ${{ secrets.CHATGLM_APIKEYSECRET }}
