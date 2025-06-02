@@ -101,8 +101,10 @@ public class GitCommand {
         // 创建文件
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH时mm分ss秒SSS毫秒").withZone(zoneId);
         String fileName = timeFormatter.format(now) + ".md";
-        String filePath = folderStr + fileName;
+        String filePath = folderStr + "/" + fileName;
         File file = new File(filePath);
+        boolean newFile = file.createNewFile();
+        System.out.println("create new file result :" + newFile);
         // 将评审结果写入文件
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(reviewRes);
@@ -114,7 +116,7 @@ public class GitCommand {
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
         // 返回写入后的文件url地址,默认使用main分支
-        return githubReviewLogUri + "/blob/main" + "/" + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ", "") + fileName;
+        return githubReviewLogUri + "/blob/main/" + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ", "") + "/" + fileName;
     }
 
 
