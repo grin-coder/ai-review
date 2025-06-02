@@ -92,10 +92,11 @@ public class GitCommand {
         String dateStr = dateFormatter.format(now);
 
         // 创建文件夹
-        String folderStr = storagePath + "/" + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ","");
+        String folderStr = storagePath + "/" + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ", "");
         File folder = new File(folderStr);
         if (!folder.exists()) {
-            folder.mkdirs();
+            boolean mkdirs = folder.mkdirs();
+            System.out.println("mkdirs result:" + mkdirs);
         }
         // 创建文件
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH时mm分ss秒SSS毫秒").withZone(zoneId);
@@ -108,12 +109,12 @@ public class GitCommand {
         }
         // 进行提交
         git.add().addFilepattern(dateStr + "/" + project + "/" + branch + "/"
-                + author.replaceAll(" ","") + "/" + fileName).call();
+                + author.replaceAll(" ", "") + "/" + fileName).call();
         git.commit().setMessage(author + "代码评审结果完成").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
         // 返回写入后的文件url地址,默认使用main分支
-        return githubReviewLogUri + "/" + project + "/" + branch + "/" + author.replaceAll(" ","") + fileName;
+        return githubReviewLogUri + "/blob/main" + "/" + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ", "") + fileName;
     }
 
 
