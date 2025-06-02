@@ -92,7 +92,7 @@ public class GitCommand {
         String dateStr = dateFormatter.format(now);
 
         // 创建文件夹
-        String folderStr = storagePath + "/" + dateStr + "/" + project + "/" + branch + "/" + author;
+        String folderStr = storagePath + "/" + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ","");
         File folder = new File(folderStr);
         if (!folder.exists()) {
             folder.mkdirs();
@@ -112,7 +112,7 @@ public class GitCommand {
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
         // 返回写入后的文件url地址,默认使用main分支
-        return githubReviewLogUri + dateStr + "/" + project + "/" + branch + "/" + author + fileName;
+        return githubReviewLogUri + dateStr + "/" + project + "/" + branch + "/" + author.replaceAll(" ","") + fileName;
     }
 
 
