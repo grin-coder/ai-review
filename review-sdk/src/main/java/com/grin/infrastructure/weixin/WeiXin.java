@@ -21,9 +21,9 @@ import java.util.Scanner;
  * @Version :v1.0
  */
 public class WeiXin {
-    private String appId = "wx6d3bec29337517fb";
-    private String secret = "7cd0b3dbd4f5772394c862bd81aacb67";
-    private String touser = "oA5bZ7bK-2U6qF6WFN4sbIXQAeRo";
+    private String appId;
+    private String secret;
+    private String touser;
     private String template_id;
 
     public WeiXin(String appId, String secret, String touser, String template_id) {
