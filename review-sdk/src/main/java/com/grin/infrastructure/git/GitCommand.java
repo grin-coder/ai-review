@@ -23,7 +23,6 @@ import java.time.format.DateTimeFormatter;
  * @Version :v1.0
  */
 public class GitCommand {
-    // 创建人，分支名，提交时的message
     private final Logger logger = LoggerFactory.getLogger(GitCommand.class);
 
     private final String githubReviewLogUri;
