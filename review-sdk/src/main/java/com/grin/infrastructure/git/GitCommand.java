@@ -35,7 +35,6 @@ public class GitCommand {
 
     private final String author;
 
-    // 评审后的文字
     private final String message;
 
     /**
