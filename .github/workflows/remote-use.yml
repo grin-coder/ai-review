@@ -24,11 +24,11 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: mkdir libs
+        run: mkdir -p ./libs
 
-      - name: Copy openai-code-review-sdk JAR
-        run: mvn dependency:copy -Dartifact=com.grin:review-sdk:1.0 -DoutputDirectory=./libs
+      - name: Download review-sdk-1.0.jar JAR
+        run: wget -O ./libs/review-sdk-1.0.jar https://github.com/grin-coder/ai-review/releases/tag/realease/review-sdk-1.0.jar
 
       - name: 仓库名称
         id: repo-name
